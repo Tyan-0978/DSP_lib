@@ -87,7 +87,7 @@ if __name__ == '__main__':
   t4 = time.time()
   t_pr = t4 - t3
   print(f'time required for prime factor algorithm: {t_pr} (s)')
-  error = X_pr - X_dir
+  error = np.abs(X_pr - X_dir)
   print(f'average error: {np.average(error)}')
 
 # ------------------------------
