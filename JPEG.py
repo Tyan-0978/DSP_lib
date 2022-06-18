@@ -489,8 +489,8 @@ if __name__ == '__main__':
 
   # JPEG compression test
   if jpeg_compression_test:
-    #img_path = 'cat.png'
-    img_path = 'black.jpg'
+    img_path = 'cat.png'
+    #img_path = 'black.jpg'
     img = cv2.imread(img_path)
     data, code, dim, mode = JPEG_compress(img)
     data_dict = {
@@ -500,20 +500,20 @@ if __name__ == '__main__':
       "mode": mode
     }
     # save pseudo jpeg file (json)
-    with open('black_psjpeg.json', 'w') as f:
+    with open('cat_psjpeg.json', 'w') as f:
       json.dump(data_dict, f)
     f.close()
 
   # jpeg extraction test
   if jpeg_extraction_test:
-    fr = open('black_psjpeg.json')
+    fr = open('cat_psjpeg.json')
     dict_load = json.load(fr)
     data_l = list(map(int, dict_load["data"]))
     code_l = dict_load["code"]
     dim_l = dict_load["dim"]
     mode_l = dict_load["mode"]
     img_recover = JPEG_extract(data_l, code_l, dim_l, mode_l)
-    cv2.imwrite('black_recover.jpg', img_recover)
+    cv2.imwrite('cat_recover.jpg', img_recover)
     print('Image recovered from json file')
 
   # 4:2:2, 4:2:0 compression test

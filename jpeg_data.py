@@ -1,6 +1,6 @@
 import json
 
-name = 'black_psjpeg.json'
+name = 'cat_psjpeg.json'
 fr = open(name)
 dict_load = json.load(fr)
 code = dict_load["code"]
