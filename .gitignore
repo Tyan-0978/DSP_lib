@@ -5,3 +5,7 @@
 *.wav
 *.jpeg
 *.jpg
+*.png
+
+# json
+*.json
