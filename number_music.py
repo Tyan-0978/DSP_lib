@@ -1,11 +1,11 @@
 # ------------------------------------------------------------
-# Music File Generating Function
+# Music Generator function
 # Generate .wav file by simplified music notation (numbers)
 # ------------------------------------------------------------
 
-import scipy.io.wavfile as scipy_wav
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.io.wavfile as scipy_wav
 
 def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
                      chord=[], chord_beat=[], tc=0.5, fs=22050):
@@ -38,6 +38,7 @@ def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
 
   # generate music signal (melody)
   music_signal = np.empty(0)
+
   for i in range(note_num):
     if score[i] == 0: # silent note
       music_signal = np.append(music_signal, np.zeros(beat[i] * ppb))
@@ -51,7 +52,8 @@ def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
     f = f_base * (2 ** e)             # note frequency
     t = np.arange(int(beat[i] * ppb)) / fs # time vector
 
-    # amplitude, decades exponentially with time constant
+    # amplitude, decays exponentially with time constant
+    # the decay make the sound more realistic
     A_init = 1
     A = A_init * np.exp(-t / tc)
 
@@ -62,15 +64,18 @@ def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
   # generate chord if any
   # frequency of chord notes are lower 8
   if len(chord) != 0:
+    # check if chord parameters are valid
     if len(chord) != len(chord_beat):
       print('Error: chord and chord_beat have different length,')
       print('so chord are not generated.')
     elif sum(chord_beat) != sum(beat):
       print('Error: beat and chord_beat have different sum,')
       print('so chord are not generated.')
+
     else:
       chord_num = len(chord)
       chord_signal = np.empty(0)
+
       for i in range(chord_num):
         chord_size = len(chord[i])              # number of notes in the chords
         chord_length = int(chord_beat[i] * ppb) # length of the signal (vector)
@@ -83,7 +88,7 @@ def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
         t = np.arange(chord_length) / fs
 
         # amplitude
-        A_init = 0.2   # initial amplitude
+        A_init = 0.2   # initial amplitude; smaller than melody
         A = A_init * np.exp(-t / tc)
 
         single_chord_signal = np.zeros(chord_length)
@@ -103,18 +108,21 @@ def numbers_to_music(score, beat, name='music', bpm=180, f_base=524,
 
   # write wave file
   # wave module generates noisy wave file, so I use scipy instead
-  #wav_file = wave.open(f'{name}.wav', 'wb')
-  #wav_file.setnchannels(2)
-  #wav_file.setsampwidth(2)
-  #wav_file.setframerate(fs)
-  #wav_file.writeframes(music_signal.tobytes())
-  #wav_file.close()
+  '''
+  wav_file = wave.open(f'{name}.wav', 'wb')
+  wav_file.setnchannels(2)
+  wav_file.setsampwidth(2)
+  wav_file.setframerate(fs)
+  wav_file.writeframes(music_signal.tobytes())
+  wav_file.close()
+  '''
   scipy_wav.write(f'{name}.wav', fs, music_signal)
   print(f'{name}.wav file is generated successfully.')
 
   return
 
 if __name__ == '__main__':
+  # first example
   score_tk = [1,1,5,5,6,6,5]
   beat_tk = [1,1,1,1,1,1,2]
   chord_tk = [[1,3,5], [1,4,6]]
@@ -122,7 +130,7 @@ if __name__ == '__main__':
   numbers_to_music(score_tk, beat_tk, name='twinkle', bpm=150,
                    chord=chord_tk, chord_beat=chord_beat_tk)
 
-  # Mariage d'amour
+  # second example (with chord): Mariage d'amour
   score_md = np.array([
     9, 5, 6.5, 9, 8,   9, 5, 6.5, 9, 8,   9, 5, 6.5, 9.5, 9,   9.5, 5, 6.5, 9.5, 9,
     9.5, 9.5, 9, 9.5, 10,   11, 11, 12, 11, 12,   9,
