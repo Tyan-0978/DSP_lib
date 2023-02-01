@@ -1,14 +1,16 @@
 # ------------------------------------------------------------
-# Structural Similarity
+# Structural Similarity measurement
 # ------------------------------------------------------------
 
+import random
 import numpy as np
 import cv2
-import random
 
 def SSIM(A, B, c1, c2):
-  # returns the structural similarity of A, B
-  # c1, c2 are adjustable constants
+  '''
+  returns the structural similarity of A, B
+  c1, c2 are adjustable constants
+  '''
   L = 255   # 255 for images
 
   # check if A, B have the same dimension
@@ -35,15 +37,26 @@ def SSIM(A, B, c1, c2):
   return SSIM_result
 
 if __name__ == '__main__':
-  alpha = 0.5 # brightness parameter
-  noise_amp = 50 # noise amplitude
-  img_path = 'cat.jpg' # should be change to the correct path
+  # for testing, prepare any image, place it in the same directory 
+  # as the SSIM.py file, and change the path below
+  img_path = './cat.jpg'
 
+  # reference image
   img1 = cv2.imread(img_path)
+
+  # same as reference image but brighter
+  # this image has large error but high structural similarity
+  alpha = 0.5 # brightness parameter
   img_temp = cv2.cvtColor(img1, cv2.COLOR_BGR2YCrCb)
   img_temp[:,:,0] = 255 * (img_temp[:,:,0] / 255) ** alpha
   img2 = cv2.cvtColor(img_temp, cv2.COLOR_YCrCb2BGR)
+
+  # ramdom image
   img_ran = np.random.rand(img1.size).reshape(img1.shape) * 255
+
+  # noisy image
+  # this image may have smaller error but looks like a random image
+  noise_amp = 50 # noise amplitude
   img_noise = (img1 - (img_ran * noise_amp / 255)) % 255
 
   print(f'Average error for changing brightness: {np.mean(np.abs(img1 - img2))}')
@@ -53,11 +66,11 @@ if __name__ == '__main__':
   print(f'SSIM for adding noises: {SSIM(img1, img_noise, 1/16, 1/16)}')
   print(f'SSIM for a random image: {SSIM(img1, img_ran, 1/16, 1/16)}')
 
-  #cv2.imshow('original image', img1)
-  #cv2.imshow('image with different brightness', img2)
-  #cv2.imshow('image with random noise', img_noise)
-  #cv2.imshow('random image', img_ran)
-  #cv2.waitKey()
+  cv2.imshow('original image', img1)
+  cv2.imshow('image with different brightness', img2)
+  cv2.imshow('image with random noise', img_noise)
+  cv2.imshow('random image', img_ran)
+  cv2.waitKey()
 
   #cv2.imwrite('brighter.jpg', img2)
   #cv2.imwrite('noise.jpg', img_noise)
