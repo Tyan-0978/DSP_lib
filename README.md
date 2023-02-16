@@ -167,8 +167,7 @@ The program prints out the image data size and compressed image data size in ter
 
 Arguments:
 
-- `img`: 3D NumPy array
-Image (colored) to be compressed. Must have dimensions `(h, w, 3)`, where `h`, `w` are integers.
+- `img`: 3D NumPy array image (colored) to be compressed. Must have dimensions `(h, w, 3)`, where `h`, `w` are integers.
 
 ```python
 def JPEG_extract(data, code, dim, mode):
